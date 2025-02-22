@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "ChtJoRUSXg0RDUrMn3hR0V3Gp+8aoSqqW1qGrzP9/6I=",
+  "Source": "VitalGuard.API",
+  "BasePath": "_content/VitalGuard.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

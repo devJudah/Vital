@@ -1,0 +1,41 @@
+@page "/patients"
+@using VitalGuardBlazor.Services
+@inject SignalRService SignalRService
+
+<h3>Patients</h3>
+
+<ul>
+    @foreach (var patient in patients)
+    {
+        <li>@patient</li>
+    }
+</ul>
+
+<button @onclick="AddPatient">Add Patient</button>
+
+@code {
+    private List<string> patients = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Listen for real-time updates
+        SignalRService.OnPatientUpdate(async (patientId, message) =>
+        {
+            // Handle real-time updates
+            patients.Add($"Patient {patientId}: {message}");
+            await InvokeAsync(StateHasChanged);  // Refresh the UI
+        });
+
+        // Start the SignalR connection
+        await SignalRService.StartConnection();
+    }
+
+    private async Task AddPatient()
+    {
+        // Simulate adding a new patient (replace with your API request)
+        patients.Add("New patient added!");
+
+        // Trigger server-side SignalR update
+        await SignalRService.SendPatientUpdate("some-patient-id", "New patient added!");
+    }
+}

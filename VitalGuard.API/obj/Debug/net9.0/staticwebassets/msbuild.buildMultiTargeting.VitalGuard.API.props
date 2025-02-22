@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/VitalGuard.API.props" />
+</Project>

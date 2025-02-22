@@ -1,0 +1,51 @@
+@page "/realtime"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+
+<h3>Real-Time Patient Updates</h3>
+
+<p>@status</p>
+<ul>
+    @foreach (var update in updates)
+    {
+        <li>@update</li>
+    }
+</ul>
+
+@code {
+    private HubConnection? _hubConnection;
+    private string status = "Connecting to SignalR...";
+    private List<string> updates = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/patientHub"))
+            .Build();
+
+        _hubConnection.On<string, string>("ReceivePatientUpdate", (patientId, message) =>
+        {
+            updates.Add($"Patient {patientId}: {message}");
+            InvokeAsync(StateHasChanged); // Force UI to update
+        });
+
+        try
+        {
+            await _hubConnection.StartAsync();
+            status = "Connected to SignalR!";
+        }
+        catch (Exception ex)
+        {
+            status = $"Error: {ex.Message}";
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+}
